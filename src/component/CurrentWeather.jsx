@@ -41,7 +41,7 @@ function CurrentWeather() {
 
         {/* Temperature */}
         <div className="mt-12">
-          <p className="font-display text-7xl font-bold tracking-[-0.05em] tabular-nums">
+          <p className="font-display text-6xl font-bold leading-none tracking-[-0.06em] tabular-nums sm:text-7xl">
             {weather.temperature}°C
           </p>
 
