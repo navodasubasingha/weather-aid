@@ -1,108 +1,74 @@
 function CurrentWeather() {
-  // Temporary sample data
-  // Later, we will replace this with Open-Meteo API data.
   const weather = {
-    city: 'Colombo',
-    country: 'Sri Lanka',
-    temperature: 29,
+    city: 'Colombo, Sri Lanka',
+    temperature: 30,
     condition: 'Partly Cloudy',
     feelsLike: 32,
     high: 31,
-    low: 25,
-    icon: '🌤️',
+    low: 27,
   }
 
   const today = new Date().toLocaleDateString('en-US', {
-    weekday: 'long',
-    month: 'long',
+    weekday: 'short',
+    month: 'short',
     day: 'numeric',
   })
 
   return (
     <section
       id="today"
-      className="overflow-hidden rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-200 sm:p-8"
+      className="relative isolate flex h-full min-h-[340px] flex-col justify-between overflow-hidden rounded-3xl bg-blue-900 p-5 text-white shadow-sm sm:p-6 xl:min-h-0"
     >
-      {/* Location and date */}
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <p className="text-sm font-medium text-slate-500">Current Weather</p>
+      {/* Background image */}
+      <img
+        src="\image\weather-hero.png"
+        alt="Colombo city and coastline"
+        className="absolute inset-0 -z-20 h-full w-full object-cover object-center"
+      />
 
-          <h2 className="mt-1 text-2xl font-bold text-slate-900">
-            {weather.city}, {weather.country}
-          </h2>
+      {/* Dark overlay for readable text */}
+      <div className="absolute inset-0 -z-10 bg-gradient-to-r from-blue-950/85 via-blue-950/45 to-blue-950/10" />
 
-          <p className="mt-1 text-sm text-slate-500">{today}</p>
+      <div className="relative z-10">
+        {/* Location and date */}
+        <div className="flex items-center gap-2">
+          <span className="text-xl">📍</span>
+
+          <h2 className="text-lg font-bold sm:text-xl">{weather.city}</h2>
         </div>
 
-        <span className="rounded-full bg-blue-50 px-4 py-2 text-sm font-medium text-blue-700">
-          Live weather coming soon
-        </span>
+        <p className="mt-1 pl-7 text-sm text-blue-100">{today}</p>
+
+        {/* Temperature */}
+        <div className="mt-12">
+          <p className="font-display text-7xl font-bold tracking-[-0.05em] tabular-nums">
+            {weather.temperature}°C
+          </p>
+
+          <h3 className="mt-2 font-display text-xl font-semibold">
+            {weather.condition}
+          </h3>
+
+          <p className="mt-2 text-sm text-blue-100">
+            Feels like {weather.feelsLike}°C
+          </p>
+        </div>
       </div>
 
-      {/* Main weather information */}
-      <div className="mt-10 grid grid-cols-1 items-center gap-8 sm:grid-cols-2">
-        {/* Temperature */}
+      {/* High and Low temperature */}
+      <div className="relative z-10 mt-10 flex items-center gap-6">
         <div>
-          <p className="text-sm font-medium text-slate-500">Right now</p>
+          <p className="text-xs text-blue-100">↑ High</p>
 
-          <div className="mt-2 flex items-start gap-3">
-            <span
-              className="text-6xl sm:text-7xl"
-              role="img"
-              aria-label={weather.condition}
-            >
-              {weather.icon}
-            </span>
-
-            <div>
-              <p className="text-6xl font-bold tracking-tight text-slate-900 sm:text-7xl">
-                {weather.temperature}°
-              </p>
-
-              <p className="mt-2 font-medium text-slate-600">
-                {weather.condition}
-              </p>
-            </div>
-          </div>
-
-          <p className="mt-5 text-sm text-slate-500">
-            Feels like{' '}
-            <span className="font-semibold text-slate-800">
-              {weather.feelsLike}°C
-            </span>
-          </p>
+          <p className="text-lg font-bold">{weather.high}°C</p>
         </div>
 
-        {/* Today's high and low */}
-        <div className="rounded-2xl bg-slate-50 p-6">
-          <p className="text-sm font-medium text-slate-500">
-            Today's temperature
-          </p>
+        <div className="h-10 w-px bg-white/30" />
 
-          <div className="mt-5 flex items-center justify-between gap-4">
-            <div>
-              <p className="text-sm text-slate-500">High</p>
+        <div>
+          <p className="text-xs text-blue-100">↓ Low</p>
 
-              <p className="mt-1 text-3xl font-bold text-slate-900">
-                {weather.high}°C
-              </p>
-            </div>
-
-            <div className="h-12 w-px bg-slate-200" />
-
-            <div>
-              <p className="text-sm text-slate-500">Low</p>
-
-              <p className="mt-1 text-3xl font-bold text-slate-900">
-                {weather.low}°C
-              </p>
-            </div>
-          </div>
-
-          <p className="mt-5 text-xs leading-5 text-slate-500">
-            Daily high and low temperatures will be loaded from the weather API.
-          </p>
+          <p className="text-lg font-bold">{weather.low}°C</p>
         </div>
       </div>
     </section>
