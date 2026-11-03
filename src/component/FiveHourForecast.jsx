@@ -7,29 +7,25 @@ const hourlyData = [
 ]
 
 function FiveHourForecast() {
-  const rainValues = hourlyData.map((hour) => hour.rain)
-
-  const minRain = Math.min(...rainValues)
-  const maxRain = Math.max(...rainValues)
-
   return (
-    <section className="relative flex h-full min-h-[340px] flex-col overflow-hidden rounded-3xl border border-blue-100 bg-gradient-to-br from-white via-blue-50/70 to-blue-100/70 p-5 shadow-sm sm:p-6">
+    <section className="relative flex h-full min-h-[340px] flex-col overflow-hidden rounded-3xl border border-blue-100 bg-gradient-to-br from-white via-blue-50/70 to-blue-100/70 p-5 shadow-sm sm:p-6 dark:border-slate-700 dark:from-[#111D32] dark:via-[#17263E] dark:to-[#1E293B]">
       {/* Decorative background circles */}
-      <div className="pointer-events-none absolute -right-16 -top-20 h-48 w-48 rounded-full bg-blue-200/30 blur-3xl" />
+      <div className="pointer-events-none absolute -right-16 -top-20 h-48 w-48 rounded-full bg-blue-200/30 blur-3xl dark:bg-blue-500/10" />
 
-      <div className="pointer-events-none absolute -bottom-20 -left-16 h-48 w-48 rounded-full bg-sky-200/40 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-20 -left-16 h-48 w-48 rounded-full bg-sky-200/40 blur-3xl dark:bg-sky-500/10" />
 
       {/* Header */}
       <div className="relative z-10 flex items-center justify-between gap-3">
         <div className="flex min-w-0 items-center gap-3">
           {/* Clock icon */}
-          <div className="hidden h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-100 text-blue-600 sm:flex">
+          <div className="hidden h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-100 text-blue-600 dark:bg-transparent sm:flex">
+            {/* Light Mode - SVG */}
             <svg
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
               strokeWidth="1.8"
-              className="h-7 w-7"
+              className="h-7 w-7 dark:hidden"
               aria-hidden="true"
             >
               <circle cx="12" cy="12" r="9" />
@@ -39,22 +35,30 @@ function FiveHourForecast() {
                 strokeLinejoin="round"
               />
             </svg>
+
+            {/* Dark Mode - Custom PNG */}
+            <img
+              src="/image/icons/clock-icon.png"
+              alt="clock icon"
+              aria-hidden="true"
+              className="hidden h-14 w-14 object-contain dark:block"
+            />
           </div>
 
           {/* Title and subtitle */}
           <div className="min-w-0">
-            <h2 className="font-display text-xl font-bold tracking-tight text-slate-900 sm:text-2xl">
+            <h2 className="font-display text-xl font-bold tracking-tight text-slate-900 sm:text-2xl dark:text-slate-100">
               Next 5 Hours
             </h2>
 
-            <p className="mt-1.5 text-sm leading-5 text-slate-500">
+            <p className="mt-1.5 text-sm leading-5 text-slate-500 dark:text-slate-400">
               Short-term weather forecast
             </p>
           </div>
         </div>
 
         {/* Hourly label */}
-        <div className="flex shrink-0 items-center gap-1.5 rounded-full border border-blue-100 bg-white/80 px-3 py-2 text-xs font-semibold text-blue-700 shadow-sm">
+        <div className="flex shrink-0 items-center gap-1.5 rounded-full border border-blue-100 bg-white/80 px-3 py-2 text-xs font-semibold text-blue-700 shadow-sm dark:border-slate-700 dark:bg-[#1B2A42] dark:text-blue-300">
           <icon name="chart-no-axes-column-increasing" size="xs" />
           <span>Hourly</span>
         </div>
@@ -67,14 +71,16 @@ function FiveHourForecast() {
             key={hour.time}
             className={`flex min-w-0 flex-col items-center rounded-2xl border px-2 py-4 text-center transition-all duration-200 hover:-translate-y-1 hover:shadow-lg sm:px-2 sm:py-5 ${
               index === 0
-                ? 'border-blue-500 bg-gradient-to-br from-blue-500 to-blue-700 text-white shadow-lg shadow-blue-200'
-                : 'border-blue-100/80 bg-white/80 text-slate-900 shadow-sm hover:border-blue-200'
+                ? 'border-blue-500 bg-gradient-to-br from-blue-500 to-blue-700 text-white shadow-lg shadow-blue-200 dark:shadow-none'
+                : 'border-blue-100/80 bg-white/80 text-slate-900 shadow-sm hover:border-blue-200 dark:border-slate-700 dark:bg-[#1B2A42] dark:text-slate-100 dark:shadow-none'
             }`}
           >
             {/* Time */}
             <p
               className={`whitespace-nowrap text-xs font-bold sm:text-sm ${
-                index === 0 ? 'text-blue-100' : 'text-slate-500'
+                index === 0
+                  ? 'text-blue-100'
+                  : 'text-slate-500 dark:text-slate-400'
               }`}
             >
               {hour.time}
@@ -92,7 +98,7 @@ function FiveHourForecast() {
             {/* Temperature */}
             <p
               className={`font-display text-3xl font-bold tracking-tight tabular-nums sm:text-4xl ${
-                index === 0 ? 'text-white' : 'text-slate-900'
+                index === 0 ? 'text-white' : 'text-slate-900 dark:text-white'
               }`}
             >
               {hour.temperature}°
@@ -103,7 +109,7 @@ function FiveHourForecast() {
               className={`mt-4 flex items-center justify-center gap-1.5 rounded-full px-2.5 py-2 ${
                 index === 0
                   ? 'bg-white/20 text-white'
-                  : 'bg-blue-50 text-blue-700'
+                  : 'bg-blue-50 text-blue-700 dark:bg-[#263B5D] dark:text-blue-300'
               }`}
             >
               <svg
@@ -123,46 +129,8 @@ function FiveHourForecast() {
         ))}
       </div>
 
-      {/* Rain probability summary */}
-      <div className="relative z-10 mt-5 flex items-center gap-3 rounded-2xl border border-blue-100 bg-blue-100/70 p-3 sm:p-4">
-        {/* Umbrella icon */}
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-blue-600 shadow-sm sm:h-12 sm:w-12">
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.7"
-            className="h-6 w-6 sm:h-7 sm:w-7"
-            aria-hidden="true"
-          >
-            <path
-              d="M3 12a9 9 0 0 1 18 0H3Z"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            <path
-              d="M12 12v6a3 3 0 0 0 6 0"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            <path d="M12 3V1.5" strokeLinecap="round" />
-          </svg>
-        </div>
-
-        <div className="min-w-0">
-          <p className="font-display text-sm font-bold text-blue-950 sm:text-base">
-            Low to moderate rain chance
-          </p>
-
-          <p className="mt-1 text-xs leading-5 text-slate-600 sm:text-sm">
-            Rain probability ranges from {minRain}% to {maxRain}% in the next 5
-            hours.
-          </p>
-        </div>
-      </div>
-
       {/* Data notice */}
-      <p className="relative z-10 mt-3 text-[10px] text-slate-400 sm:text-[11px]">
+      <p className="relative z-10 mt-3 text-[10px] text-slate-400 sm:text-[11px] dark:text-slate-500">
         Sample data only — live forecasts will be loaded using Open-Meteo.
       </p>
     </section>

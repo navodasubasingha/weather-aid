@@ -36,19 +36,22 @@ function WeeklyForecast() {
   return (
     <section
       id="weekly"
-      className="relative flex h-full min-h-[340px] flex-col overflow-hidden rounded-3xl border border-blue-100 bg-gradient-to-br from-white via-blue-50/70 to-blue-100/70 p-5 shadow-sm sm:p-6 xl:min-h-0"
+      className="relative flex h-full min-h-[340px] flex-col overflow-hidden rounded-3xl border border-blue-100 bg-gradient-to-br from-white via-blue-50/70 to-blue-100/70 p-5 shadow-sm sm:p-6 xl:min-h-0 dark:border-slate-700 dark:from-[#111D32] dark:via-[#17263E] dark:to-[#1E293B]"
     >
       {/* Header */}
       <div className="flex items-center justify-between gap-3">
         <div className="flex min-w-0 items-center gap-3">
           {/* Calendar icon */}
-          <div className="hidden h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 sm:flex">
+
+          {/* Calendar icon */}
+          <div className="hidden h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 sm:flex dark:bg-transparent">
+            {/* Light Mode - Original SVG */}
             <svg
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
               strokeWidth="1.8"
-              className="h-7 w-7"
+              className="h-7 w-7 dark:hidden"
               aria-hidden="true"
             >
               <rect x="3" y="5" width="18" height="16" rx="3" />
@@ -61,22 +64,30 @@ function WeeklyForecast() {
                 strokeLinecap="round"
               />
             </svg>
+
+            {/* Dark Mode - Generated PNG */}
+            <img
+              src="/image/icons/calendar-icon.png"
+              alt=""
+              aria-hidden="true"
+              className="hidden h-12 w-12 rounded-2xl object-contain dark:block"
+            />
           </div>
 
           {/* Title and subtitle */}
           <div className="min-w-0">
-            <h2 className="font-display text-xl font-bold tracking-tight text-slate-900 sm:text-2xl">
+            <h2 className="font-display text-xl font-bold tracking-tight text-slate-900 sm:text-2xl dark:text-slate-100">
               7-Day Forecast
             </h2>
 
-            <p className="mt-1.5 text-xs leading-5 text-slate-500 sm:text-sm">
+            <p className="mt-1.5 text-xs leading-5 text-slate-500 sm:text-sm dark:text-slate-400">
               Weather outlook for the coming week
             </p>
           </div>
         </div>
 
         {/* Daily label */}
-        <div className="flex shrink-0 items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-600">
+        <div className="flex shrink-0 items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-600 dark:border-slate-700 dark:bg-[#1B2A42] dark:text-slate-300">
           <svg
             viewBox="0 0 24 24"
             fill="none"
@@ -98,15 +109,15 @@ function WeeklyForecast() {
         {days.map((day) => (
           <div
             key={day.date}
-            className="flex min-w-0 flex-col items-center rounded-2xl border border-slate-200 bg-white px-2 py-4 text-center shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-blue-200 hover:shadow-md"
+            className="flex min-w-0 flex-col items-center rounded-2xl border border-slate-200 bg-white px-2 py-4 text-center shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-blue-200 hover:shadow-md dark:border-slate-700 dark:bg-[#1B2A42] dark:hover:border-blue-500"
           >
             {/* Weekday */}
-            <p className="font-display text-sm font-bold text-slate-800">
+            <p className="font-display text-sm font-bold text-slate-800 dark:text-slate-100">
               {day.day}
             </p>
 
             {/* Date */}
-            <p className="mt-1 text-[10px] font-medium text-slate-500">
+            <p className="mt-1 text-[10px] font-medium text-slate-500 dark:text-slate-400">
               {day.date}
             </p>
 
@@ -120,25 +131,25 @@ function WeeklyForecast() {
             </span>
 
             {/* Weather condition */}
-            <p className="min-h-8 text-[10px] leading-4 text-slate-500">
+            <p className="min-h-8 text-[10px] leading-4 text-slate-500 dark:text-slate-400">
               {day.condition}
             </p>
 
             {/* High and low temperatures */}
             <div className="mt-2 flex items-center justify-center gap-1.5">
-              <span className="font-display text-base font-bold tabular-nums text-slate-900">
+              <span className="font-display text-base font-bold tabular-nums text-slate-900 dark:text-white">
                 {day.high}°
               </span>
 
-              <span className="text-slate-400">/</span>
+              <span className="text-slate-400 dark:text-slate-500">/</span>
 
-              <span className="font-display text-sm font-medium tabular-nums text-slate-500">
+              <span className="font-display text-sm font-medium tabular-nums text-slate-500 dark:text-slate-400">
                 {day.low}°
               </span>
             </div>
 
             {/* Rain probability */}
-            <div className="mt-3 flex items-center justify-center gap-1 rounded-full bg-blue-50 px-2 py-1.5 text-blue-700">
+            <div className="mt-3 flex items-center justify-center gap-1 rounded-full bg-blue-50 px-2 py-1.5 text-blue-700 dark:bg-[#263B5D] dark:text-blue-300">
               <svg
                 viewBox="0 0 24 24"
                 fill="currentColor"

@@ -27,26 +27,26 @@ const highlights = [
 
 function WeatherHighlights() {
   return (
-    <section className="relative flex h-full min-h-[320px] flex-col overflow-hidden rounded-3xl border border-blue-100 bg-gradient-to-br from-white via-blue-50/70 to-blue-100/70 p-5 shadow-sm sm:p-6 xl:min-h-0">
+    <section className="relative flex h-full min-h-[320px] flex-col overflow-hidden rounded-3xl border border-blue-100 bg-gradient-to-br from-white via-blue-50/70 to-blue-100/70 p-5 shadow-sm sm:p-6 xl:min-h-0 dark:border-slate-700 dark:from-[#111D32] dark:via-[#17263E] dark:to-[#1E293B]">
       {/* Decorative gradient effects */}
-      <div className="pointer-events-none absolute -right-16 -top-20 h-48 w-48 rounded-full bg-blue-200/30 blur-3xl" />
+      <div className="pointer-events-none absolute -right-16 -top-20 h-48 w-48 rounded-full bg-blue-200/30 blur-3xl dark:bg-blue-500/10" />
 
-      <div className="pointer-events-none absolute -bottom-20 -left-16 h-48 w-48 rounded-full bg-sky-200/40 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-20 -left-16 h-48 w-48 rounded-full bg-sky-200/40 blur-3xl dark:bg-sky-500/10" />
 
       {/* Header */}
       <div className="relative z-10 flex shrink-0 items-center justify-between gap-3">
         <div>
-          <h2 className="font-display text-xl font-bold tracking-tight text-slate-900 sm:text-2xl">
+          <h2 className="font-display text-xl font-bold tracking-tight text-slate-900 sm:text-2xl dark:text-slate-100">
             Today's Highlights
           </h2>
 
-          <p className="mt-1.5 text-xs leading-5 text-slate-500 sm:text-sm">
+          <p className="mt-1.5 text-xs leading-5 text-slate-500 sm:text-sm dark:text-slate-400">
             Important weather conditions at a glance
           </p>
         </div>
 
         {/* Weather details icon */}
-        <div className="hidden h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-blue-100 bg-white/80 text-blue-600 shadow-sm sm:flex">
+        <div className="hidden h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-blue-100 bg-white/80 text-blue-600 shadow-sm sm:flex dark:border-slate-700 dark:bg-[#1B2A42] dark:text-blue-300">
           <svg
             viewBox="0 0 24 24"
             fill="none"
@@ -68,10 +68,10 @@ function WeatherHighlights() {
         {highlights.map((item) => (
           <div
             key={item.title}
-            className="flex min-w-0 items-center gap-3 rounded-2xl border border-white/80 bg-white/75 px-3 py-3 shadow-sm transition-all duration-200 hover:border-blue-200 hover:bg-white hover:shadow-md sm:gap-4 sm:px-4"
+            className="flex min-w-0 items-center gap-3 rounded-2xl border border-white/80 bg-white/75 px-3 py-3 shadow-sm transition-all duration-200 hover:border-blue-200 hover:bg-white hover:shadow-md sm:gap-4 sm:px-4 dark:border-slate-700 dark:bg-[#1B2A42] dark:hover:border-blue-500 dark:hover:bg-[#223550]"
           >
             {/* PNG icon */}
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-50/80 sm:h-12 sm:w-12">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-50/80 sm:h-12 sm:w-12 dark:bg-[#263B5D]">
               <img
                 src={item.icon}
                 alt={item.title}
@@ -81,17 +81,17 @@ function WeatherHighlights() {
 
             {/* Title and description */}
             <div className="min-w-0 flex-1">
-              <h3 className="font-display text-sm font-bold tracking-tight text-slate-800 sm:text-base">
+              <h3 className="font-display text-sm font-bold tracking-tight text-slate-800 sm:text-base dark:text-slate-100">
                 {item.title}
               </h3>
 
-              <p className="mt-1 text-xs leading-5 text-slate-500">
+              <p className="mt-1 text-xs leading-5 text-slate-500 dark:text-slate-400">
                 {item.description}
               </p>
             </div>
 
             {/* Metric value */}
-            <p className="shrink-0 font-display text-lg font-bold tracking-tight tabular-nums text-slate-900 sm:text-xl">
+            <p className="shrink-0 font-display text-lg font-bold tracking-tight tabular-nums text-slate-900 sm:text-xl dark:text-white">
               {item.value}
             </p>
           </div>
@@ -99,7 +99,7 @@ function WeatherHighlights() {
       </div>
 
       {/* Data notice */}
-      <p className="relative z-10 mt-3 shrink-0 text-[10px] text-slate-400 sm:text-[11px]">
+      <p className="relative z-10 mt-3 shrink-0 text-[10px] text-slate-400 sm:text-[11px] dark:text-slate-500">
         Sample values — live weather data coming soon.
       </p>
     </section>
