@@ -8,7 +8,7 @@ const hourlyData = [
 
 function FiveHourForecast() {
   return (
-    <section className="relative flex h-full min-h-[340px] flex-col overflow-hidden rounded-3xl border border-blue-100 bg-gradient-to-br from-white via-blue-50/70 to-blue-100/70 p-5 shadow-sm sm:p-6 dark:border-slate-700 dark:from-[#111D32] dark:via-[#17263E] dark:to-[#1E293B]">
+    <section className="relative flex h-full min-h-[340px] flex-col overflow-hidden rounded-3xl border border-blue-100 bg-gradient-to-br from-white via-blue-50/70 to-blue-100/70 p-5 font-montserrat shadow-sm sm:p-6 dark:border-slate-700 dark:from-[#111D32] dark:via-[#17263E] dark:to-[#1E293B]">
       {/* Decorative background circles */}
       <div className="pointer-events-none absolute -right-16 -top-20 h-48 w-48 rounded-full bg-blue-200/30 blur-3xl dark:bg-blue-500/10" />
 
@@ -39,7 +39,7 @@ function FiveHourForecast() {
             {/* Dark Mode - Custom PNG */}
             <img
               src="/image/icons/clock-icon.png"
-              alt="clock icon"
+              alt=""
               aria-hidden="true"
               className="hidden h-14 w-14 object-contain dark:block"
             />
@@ -47,7 +47,7 @@ function FiveHourForecast() {
 
           {/* Title and subtitle */}
           <div className="min-w-0">
-            <h2 className="font-display text-xl font-bold tracking-tight text-slate-900 sm:text-2xl dark:text-slate-100">
+            <h2 className="text-xl font-bold tracking-tight text-slate-900 sm:text-2xl dark:text-slate-100">
               Next 5 Hours
             </h2>
 
@@ -69,7 +69,6 @@ function FiveHourForecast() {
         {hourlyData.map((hour, index) => (
           <div
             key={hour.time}
-
             className={`flex min-w-0 flex-col items-center rounded-2xl border px-2 py-4 text-center shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-blue-300 hover:shadow-lg dark:hover:border-blue-500 sm:px-2 sm:py-5 ${
               index === 0
                 ? 'border-blue-500 bg-gradient-to-br from-blue-500 to-blue-700 text-white dark:border-slate-700 dark:from-[#1B2A42] dark:via-[#1B2A42] dark:to-[#1B2A42] dark:text-slate-100'
@@ -98,7 +97,7 @@ function FiveHourForecast() {
 
             {/* Temperature */}
             <p
-              className={`font-display text-3xl font-bold tracking-tight tabular-nums sm:text-4xl ${
+              className={`text-3xl font-bold tracking-tight tabular-nums sm:text-4xl ${
                 index === 0 ? 'text-white' : 'text-slate-900 dark:text-white'
               }`}
             >
