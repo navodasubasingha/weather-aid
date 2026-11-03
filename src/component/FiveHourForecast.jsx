@@ -69,10 +69,11 @@ function FiveHourForecast() {
         {hourlyData.map((hour, index) => (
           <div
             key={hour.time}
-            className={`flex min-w-0 flex-col items-center rounded-2xl border px-2 py-4 text-center transition-all duration-200 hover:-translate-y-1 hover:shadow-lg sm:px-2 sm:py-5 ${
+
+            className={`flex min-w-0 flex-col items-center rounded-2xl border px-2 py-4 text-center shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-blue-300 hover:shadow-lg dark:hover:border-blue-500 sm:px-2 sm:py-5 ${
               index === 0
-                ? 'border-blue-500 bg-gradient-to-br from-blue-500 to-blue-700 text-white shadow-lg shadow-blue-200 dark:shadow-none'
-                : 'border-blue-100/80 bg-white/80 text-slate-900 shadow-sm hover:border-blue-200 dark:border-slate-700 dark:bg-[#1B2A42] dark:text-slate-100 dark:shadow-none'
+                ? 'border-blue-500 bg-gradient-to-br from-blue-500 to-blue-700 text-white dark:border-slate-700 dark:from-[#1B2A42] dark:via-[#1B2A42] dark:to-[#1B2A42] dark:text-slate-100'
+                : 'border-blue-100/80 bg-white/80 text-slate-900 dark:border-slate-700 dark:bg-[#1B2A42] dark:text-slate-100'
             }`}
           >
             {/* Time */}
@@ -105,13 +106,7 @@ function FiveHourForecast() {
             </p>
 
             {/* Rain probability */}
-            <div
-              className={`mt-4 flex items-center justify-center gap-1.5 rounded-full px-2.5 py-2 ${
-                index === 0
-                  ? 'bg-white/20 text-white'
-                  : 'bg-blue-50 text-blue-700 dark:bg-[#263B5D] dark:text-blue-300'
-              }`}
-            >
+            <div className="mt-4 flex items-center justify-center gap-1.5 rounded-full bg-blue-50 px-2.5 py-2 text-blue-700 dark:bg-[#263B5D] dark:text-blue-300">
               <svg
                 viewBox="0 0 24 24"
                 fill="currentColor"
