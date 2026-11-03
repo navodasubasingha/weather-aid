@@ -69,18 +69,18 @@ function FiveHourForecast() {
         {hourlyData.map((hour, index) => (
           <div
             key={hour.time}
-            className={`flex min-w-0 flex-col items-center rounded-2xl border px-2 py-4 text-center shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-blue-300 hover:shadow-lg dark:hover:border-blue-500 sm:px-2 sm:py-5 ${
+            className={`flex min-w-0 flex-col items-center rounded-2xl border px-2 py-4 text-center shadow-[0_3px_12px_rgba(15,23,42,0.08)] transition-all duration-200 hover:-translate-y-1 hover:border-blue-300 hover:shadow-[0_8px_20px_rgba(15,23,42,0.12)] dark:hover:border-blue-500 sm:px-2 sm:py-5 ${
               index === 0
-                ? 'border-blue-500 bg-gradient-to-br from-blue-500 to-blue-700 text-white dark:border-slate-700 dark:from-[#1B2A42] dark:via-[#1B2A42] dark:to-[#1B2A42] dark:text-slate-100'
-                : 'border-blue-100/80 bg-white/80 text-slate-900 dark:border-slate-700 dark:bg-[#1B2A42] dark:text-slate-100'
+                ? 'border-blue-600 bg-gradient-to-br from-blue-500 to-blue-700 text-white dark:border-slate-600 dark:from-[#1B2A42] dark:via-[#1B2A42] dark:to-[#1B2A42] dark:text-slate-100 dark:shadow-none'
+                : 'border-slate-200 bg-white text-slate-900 dark:border-slate-600 dark:bg-[#1B2A42] dark:text-slate-100 dark:shadow-none'
             }`}
           >
             {/* Time */}
             <p
               className={`whitespace-nowrap text-xs font-bold sm:text-sm ${
                 index === 0
-                  ? 'text-blue-100'
-                  : 'text-slate-500 dark:text-slate-400'
+                  ? 'text-blue-50'
+                  : 'text-slate-600 dark:text-slate-300'
               }`}
             >
               {hour.time}
