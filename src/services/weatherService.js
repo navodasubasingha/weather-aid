@@ -59,6 +59,7 @@ export async function getWeatherForecast(
       'apparent_temperature',
       'precipitation_probability',
       'weather_code',
+      'is_day',
       'wind_speed_10m',
       'wind_direction_10m',
       'visibility',
