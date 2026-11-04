@@ -184,14 +184,14 @@ function WeatherHighlights({ current, hourly, loading }) {
         ))}
       </div>
 
-      {/* API Data Information */}
+      {/* API Data Information
       <div className="relative z-10 mt-4 flex shrink-0 items-center gap-2">
         <span className="h-1.5 w-1.5 rounded-full bg-blue-400" />
 
         <p className="text-[10px] font-medium text-slate-400 sm:text-[11px] dark:text-slate-500">
           Weather data provided by Open-Meteo
         </p>
-      </div>
+      </div> */}
     </section>
   )
 }
