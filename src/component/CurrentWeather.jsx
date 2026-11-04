@@ -1,23 +1,35 @@
 import { getWeatherInfo } from '../utils/weatherAssets'
 import LocalTimeDisplay from './LocalTimeDisplay'
 
-function CurrentWeather() {
-  // Temporary sample weather data
-  const weather = {
-    city: 'Colombo, Sri Lanka',
-    temperature: 30,
-    weatherCode: 45,
-    isDay: 0,
-    feelsLike: 32,
-    high: 31,
-    low: 27,
-    timezone: 'Asia/Colombo',
-    sunrise: undefined,
-    sunset: undefined,
-  }
+function CurrentWeather({
+  current,
+  daily,
+  location,
+  timezone,
+  loading,
+  unit = 'C',
+}) {
+  // Get current weather information
+  const weatherCode = current?.weather_code ?? 0
+  const isDay = current?.is_day ?? 1
 
   // Get weather description and background image
-  const weatherInfo = getWeatherInfo(weather.weatherCode, weather.isDay)
+  const weatherInfo = getWeatherInfo(weatherCode, isDay)
+
+  // Weather values from Open-Meteo API
+  const temperature = current?.temperature_2m
+  const feelsLike = current?.apparent_temperature
+
+  const high = daily?.temperature_2m_max?.[0]
+  const low = daily?.temperature_2m_min?.[0]
+
+  // Sunrise and sunset from daily forecast
+  const sunrise = daily?.sunrise?.[0]
+  const sunset = daily?.sunset?.[0]
+
+  // Location information
+  const city = location?.name || 'Colombo'
+  const country = location?.country || 'Sri Lanka'
 
   // Use day image if the night image is unavailable
   function handleImageError(event) {
@@ -28,6 +40,7 @@ function CurrentWeather() {
   return (
     <section
       id="today"
+      aria-busy={loading}
       className="relative isolate flex h-full min-h-[320px] flex-col justify-between overflow-hidden rounded-3xl bg-blue-900 p-5 text-white shadow-sm sm:p-6 xl:min-h-0"
     >
       {/* Dynamic weather background */}
@@ -48,14 +61,14 @@ function CurrentWeather() {
           <span className="text-xl">📍</span>
 
           <h2 className="font-display text-lg font-bold sm:text-xl">
-            {weather.city}
+            {city}, {country}
           </h2>
         </div>
 
         {/* Temperature */}
         <div className="mt-10">
           <p className="font-display text-6xl font-bold leading-none tracking-tight tabular-nums sm:text-7xl">
-            {weather.temperature}°C
+            {temperature != null ? `${Math.round(temperature)}°${unit}` : '--'}
           </p>
 
           <h3 className="mt-2 font-display text-xl font-semibold sm:text-2xl">
@@ -63,8 +76,13 @@ function CurrentWeather() {
           </h3>
 
           <p className="mt-2 text-sm text-blue-100">
-            Feels like {weather.feelsLike}°C
+            Feels like{' '}
+            {feelsLike != null ? `${Math.round(feelsLike)}°${unit}` : '--'}
           </p>
+
+          {loading && (
+            <p className="mt-2 text-xs text-blue-100">Updating weather...</p>
+          )}
         </div>
       </div>
 
@@ -72,22 +90,26 @@ function CurrentWeather() {
       <div className="relative z-10 mt-8 flex items-center gap-6">
         <div>
           <p className="text-xs text-blue-100">↑ High</p>
-          <p className="font-display text-lg font-bold">{weather.high}°C</p>
+          <p className="font-display text-lg font-bold">
+            {high != null ? `${Math.round(high)}°${unit}` : '--'}
+          </p>
         </div>
 
         <div className="h-9 w-px bg-white/30" />
 
         <div>
           <p className="text-xs text-blue-100">↓ Low</p>
-          <p className="font-display text-lg font-bold">{weather.low}°C</p>
+          <p className="font-display text-lg font-bold">
+            {low != null ? `${Math.round(low)}°${unit}` : '--'}
+          </p>
         </div>
       </div>
 
       {/* Local Time Widget */}
       <LocalTimeDisplay
-        timeZone={weather.timezone}
-        sunrise={weather.sunrise}
-        sunset={weather.sunset}
+        timeZone={timezone || location?.timezone || 'Asia/Colombo'}
+        sunrise={sunrise}
+        sunset={sunset}
       />
     </section>
   )
