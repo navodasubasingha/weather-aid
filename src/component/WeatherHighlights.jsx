@@ -1,34 +1,106 @@
-const highlights = [
-  {
-    title: 'Humidity',
-    value: '75%',
-    description: 'Moisture in the air',
-    icon: '/image/icons/humidity.png',
-  },
-  {
-    title: 'Wind Speed',
-    value: '12 km/h',
-    description: 'Current wind condition',
-    icon: '/image/icons/wind-speed.png',
-  },
-  {
-    title: 'UV Index',
-    value: '6',
-    description: 'Ultraviolet intensity',
-    icon: '/image/icons/uv-index.png',
-    status: 'High',
-  },
-  {
-    title: 'Visibility',
-    value: '10 km',
-    description: 'How far you can see',
-    icon: '/image/icons/visibility.png',
-  },
-]
+function getUVStatus(value) {
+  if (value == null) return ''
 
-function WeatherHighlights() {
+  if (value <= 2) return 'Low'
+  if (value <= 5) return 'Moderate'
+  if (value <= 7) return 'High'
+  if (value <= 10) return 'Very High'
+
+  return 'Extreme'
+}
+
+// Find the hourly forecast closest to the current weather time
+function getNearestHourlyIndex(currentTime, hourlyTimes) {
+  if (!currentTime || !Array.isArray(hourlyTimes) || hourlyTimes.length === 0) {
+    return -1
+  }
+
+  const targetTime = new Date(currentTime).getTime()
+
+  if (!Number.isFinite(targetTime)) {
+    return -1
+  }
+
+  let nearestIndex = -1
+  let smallestDifference = Infinity
+
+  hourlyTimes.forEach((time, index) => {
+    const hourlyTime = new Date(time).getTime()
+
+    if (!Number.isFinite(hourlyTime)) return
+
+    const difference = Math.abs(targetTime - hourlyTime)
+
+    if (difference < smallestDifference) {
+      smallestDifference = difference
+      nearestIndex = index
+    }
+  })
+
+  return nearestIndex
+}
+
+function WeatherHighlights({ current, hourly, loading }) {
+  // Find the closest hourly data point
+  const hourlyIndex = getNearestHourlyIndex(current?.time, hourly?.time)
+
+  // Current weather values
+  const humidity = current?.relative_humidity_2m
+  const windSpeed = current?.wind_speed_10m
+
+  // UV and visibility are obtained from the nearest hourly forecast
+  const uvIndex = hourlyIndex >= 0 ? hourly?.uv_index?.[hourlyIndex] : null
+
+  const visibilityMeters =
+    hourlyIndex >= 0 ? hourly?.visibility?.[hourlyIndex] : null
+
+  // Convert visibility from meters to kilometers
+  const visibilityKm = visibilityMeters != null ? visibilityMeters / 1000 : null
+
+  // Format values
+  const humidityValue = humidity != null ? `${Math.round(humidity)}%` : '--'
+
+  const windSpeedValue =
+    windSpeed != null ? `${Math.round(windSpeed)} km/h` : '--'
+
+  const uvValue = uvIndex != null ? `${Math.round(uvIndex)}` : '--'
+
+  const visibilityValue =
+    visibilityKm != null ? `${Number(visibilityKm.toFixed(1))} km` : '--'
+
+  const highlights = [
+    {
+      title: 'Humidity',
+      value: humidityValue,
+      description: 'Moisture in the air',
+      icon: '/image/icons/humidity.png',
+    },
+    {
+      title: 'Wind Speed',
+      value: windSpeedValue,
+      description: 'Current wind condition',
+      icon: '/image/icons/wind-speed.png',
+    },
+    {
+      title: 'UV Index',
+      value: uvValue,
+      description: 'Ultraviolet intensity',
+      icon: '/image/icons/uv-index.png',
+      status: uvIndex != null ? getUVStatus(uvIndex) : null,
+    },
+    {
+      title: 'Visibility',
+      value: visibilityValue,
+      description: 'How far you can see',
+      icon: '/image/icons/visibility.png',
+    },
+  ]
+
   return (
-    <section className="font-montserrat relative flex h-full min-h-[320px] flex-col overflow-hidden rounded-3xl border border-blue-100 bg-gradient-to-br from-white via-blue-50/70 to-blue-100/70 p-5 shadow-sm transition-colors duration-300 sm:p-6 xl:min-h-0 dark:border-slate-700 dark:from-[#111D32] dark:via-[#17263E] dark:to-[#1E293B]">
+    <section
+      aria-busy={loading}
+      className="font-montserrat relative flex h-full min-h-[320px] flex-col overflow-hidden rounded-3xl border border-blue-100 bg-gradient-to-br from-white via-blue-50/70 to-blue-100/70 p-5 shadow-sm transition-colors duration-300 sm:p-6 xl:min-h-0 dark:border-slate-700 dark:from-[#111D32] dark:via-[#17263E] dark:to-[#1E293B]"
+    >
       {/* Decorative background effects */}
       <div className="pointer-events-none absolute -right-16 -top-20 h-48 w-48 rounded-full bg-blue-200/30 blur-3xl dark:bg-blue-500/10" />
 
@@ -112,12 +184,12 @@ function WeatherHighlights() {
         ))}
       </div>
 
-      {/* Data notice */}
+      {/* API Data Information */}
       <div className="relative z-10 mt-4 flex shrink-0 items-center gap-2">
         <span className="h-1.5 w-1.5 rounded-full bg-blue-400" />
 
         <p className="text-[10px] font-medium text-slate-400 sm:text-[11px] dark:text-slate-500">
-          Sample values — live weather data coming soon.
+          Weather data provided by Open-Meteo
         </p>
       </div>
     </section>

@@ -169,6 +169,7 @@ function App() {
           <div className="xl:col-span-5 xl:min-h-0">
             <WeatherHighlights
               current={weatherData?.current}
+              hourly={weatherData?.hourly}
               loading={isWeatherLoading}
             />
           </div>
