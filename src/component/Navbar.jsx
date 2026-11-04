@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { searchLocations } from '../services/geocodingService'
 
 function Navbar({
   onSearch,
@@ -9,17 +10,61 @@ function Navbar({
   apiStatus = 'loading',
 }) {
   const [city, setCity] = useState('')
+  const [suggestions, setSuggestions] = useState([])
+  const [isSuggestionsLoading, setIsSuggestionsLoading] = useState(false)
+  const [showSuggestions, setShowSuggestions] = useState(false)
+  const [activeSuggestionIndex, setActiveSuggestionIndex] = useState(-1)
   const [logoImageFailed, setLogoImageFailed] = useState(false)
 
+  // API status
   const isApiLoading = apiStatus === 'loading'
   const isApiOnline = apiStatus === 'online'
+
   const apiStatusLabel = isApiLoading
     ? 'Connecting...'
     : isApiOnline
       ? 'Online'
       : 'Offline'
 
-  // User location information
+  // City autocomplete suggestions
+  useEffect(() => {
+    const query = city.trim()
+
+    if (query.length < 2) return undefined
+
+    const controller = new AbortController()
+
+    const debounceTimer = setTimeout(async () => {
+      setIsSuggestionsLoading(true)
+
+      try {
+        const results = await searchLocations(query, {
+          signal: controller.signal,
+        })
+
+        setSuggestions(results)
+        setShowSuggestions(true)
+        setActiveSuggestionIndex(-1)
+      } catch (error) {
+        if (error.name !== 'AbortError') {
+          console.error('City suggestions error:', error)
+          setSuggestions([])
+          setShowSuggestions(true)
+        }
+      } finally {
+        if (!controller.signal.aborted) {
+          setIsSuggestionsLoading(false)
+        }
+      }
+    }, 300)
+
+    return () => {
+      clearTimeout(debounceTimer)
+      controller.abort()
+    }
+  }, [city])
+
+  // User's browser timezone
   const browserTimeZone =
     Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'
 
@@ -38,7 +83,6 @@ function Navbar({
   // Current time
   const [currentTime, setCurrentTime] = useState(() => new Date())
 
-  // Update clock every second
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date())
@@ -47,7 +91,7 @@ function Navbar({
     return () => clearInterval(timer)
   }, [])
 
-  // Detect user's actual location
+  // Detect user's GPS location
   useEffect(() => {
     let isActive = true
 
@@ -61,7 +105,6 @@ function Navbar({
       async (position) => {
         const { latitude, longitude } = position.coords
 
-        // Reverse geocoding URL
         const locationParams = new URLSearchParams({
           latitude: String(latitude),
           longitude: String(longitude),
@@ -70,7 +113,6 @@ function Navbar({
 
         const reverseGeocodeURL = `https://api.bigdatacloud.net/data/reverse-geocode-client?${locationParams}`
 
-        // Open-Meteo timezone URL
         const timezoneParams = new URLSearchParams({
           latitude: String(latitude),
           longitude: String(longitude),
@@ -80,12 +122,12 @@ function Navbar({
 
         const timezoneURL = `https://api.open-meteo.com/v1/forecast?${timezoneParams}`
 
-        // Call both APIs independently
         const [locationResult, timezoneResult] = await Promise.allSettled([
           fetch(reverseGeocodeURL).then((response) => {
             if (!response.ok) {
               throw new Error('Location lookup failed')
             }
+
             return response.json()
           }),
 
@@ -93,6 +135,7 @@ function Navbar({
             if (!response.ok) {
               throw new Error('Timezone lookup failed')
             }
+
             return response.json()
           }),
         ])
@@ -152,7 +195,7 @@ function Navbar({
     }
   }, [browserTimeZone])
 
-  // Format user's local time
+  // User local time
   const localTime = new Intl.DateTimeFormat('en-US', {
     timeZone: userLocation.timeZone,
     hour: '2-digit',
@@ -160,7 +203,7 @@ function Navbar({
     hour12: true,
   }).format(currentTime)
 
-  // Format user's local date
+  // User local date
   const localDate = new Intl.DateTimeFormat('en-US', {
     timeZone: userLocation.timeZone,
     weekday: 'short',
@@ -169,7 +212,7 @@ function Navbar({
     year: 'numeric',
   }).format(currentTime)
 
-  // Detect daytime / nighttime using user's timezone
+  // Day / Night
   const localHour = Number(
     new Intl.DateTimeFormat('en-GB', {
       timeZone: userLocation.timeZone,
@@ -180,15 +223,196 @@ function Navbar({
 
   const isDayTime = localHour >= 6 && localHour < 18
 
+  // Search input change
+  function handleCityChange(event) {
+    const value = event.target.value
+
+    setCity(value)
+    setActiveSuggestionIndex(-1)
+
+    if (value.trim().length >= 2) {
+      setSuggestions([])
+      setIsSuggestionsLoading(true)
+      setShowSuggestions(true)
+    } else {
+      setSuggestions([])
+      setShowSuggestions(false)
+      setIsSuggestionsLoading(false)
+    }
+  }
+
+  // Select city suggestion
+  function handleSelectSuggestion(location) {
+    onSearch?.(location)
+
+    setCity('')
+    setSuggestions([])
+    setShowSuggestions(false)
+    setIsSuggestionsLoading(false)
+    setActiveSuggestionIndex(-1)
+  }
+
+  // Keyboard navigation
+  function handleSuggestionKeyDown(event) {
+    if (event.key === 'ArrowDown' && suggestions.length > 0) {
+      event.preventDefault()
+      setShowSuggestions(true)
+
+      setActiveSuggestionIndex((previous) =>
+        previous >= suggestions.length - 1 ? 0 : previous + 1
+      )
+    } else if (event.key === 'ArrowUp' && suggestions.length > 0) {
+      event.preventDefault()
+
+      setActiveSuggestionIndex((previous) =>
+        previous <= 0 ? suggestions.length - 1 : previous - 1
+      )
+    } else if (event.key === 'Escape') {
+      setShowSuggestions(false)
+      setActiveSuggestionIndex(-1)
+    } else if (
+      event.key === 'Enter' &&
+      activeSuggestionIndex >= 0 &&
+      suggestions[activeSuggestionIndex]
+    ) {
+      event.preventDefault()
+      handleSelectSuggestion(suggestions[activeSuggestionIndex])
+    }
+  }
+
+  // Search submit
   function handleSubmit(event) {
     event.preventDefault()
+
+    if (activeSuggestionIndex >= 0 && suggestions[activeSuggestionIndex]) {
+      handleSelectSuggestion(suggestions[activeSuggestionIndex])
+      return
+    }
 
     const searchCity = city.trim()
 
     if (searchCity && onSearch) {
       onSearch(searchCity)
+
       setCity('')
+      setSuggestions([])
+      setShowSuggestions(false)
     }
+  }
+
+  // Suggestions dropdown
+
+  function renderSuggestions(isMobile = false) {
+    if (!showSuggestions || city.trim().length < 2) {
+      return null
+    }
+
+    return (
+      <div
+        role="listbox"
+        aria-label="City suggestions"
+        className={`weather-suggestions-scrollbar absolute top-full z-[70] mt-2 max-h-[360px] overflow-y-auto overscroll-contain rounded-2xl border border-slate-200/90 bg-white/95 p-2 shadow-[0_16px_45px_rgba(15,23,42,0.16)] backdrop-blur-xl dark:border-slate-700 dark:bg-[#111D32]/95 dark:shadow-black/40 ${
+          isMobile
+            ? 'left-0 right-0 w-full'
+            : 'left-0 w-[320px] max-w-[calc(100vw-2rem)]'
+        }`}
+      >
+        {isSuggestionsLoading ? (
+          <div className="flex items-center gap-3 px-4 py-5 text-sm text-slate-500 dark:text-slate-400">
+            <span className="h-4 w-4 animate-spin rounded-full border-2 border-blue-500/25 border-t-blue-500" />
+            Searching locations...
+          </div>
+        ) : suggestions.length > 0 ? (
+          <div className="flex flex-col gap-1">
+            {suggestions.map((location, index) => {
+              const detail = [location.admin1, location.country]
+                .filter(
+                  (value, valueIndex, values) =>
+                    value &&
+                    value !== location.name &&
+                    values.indexOf(value) === valueIndex
+                )
+                .join(', ')
+
+              return (
+                <button
+                  key={
+                    location.id ??
+                    `${location.name}-${location.latitude}-${location.longitude}`
+                  }
+                  type="button"
+                  role="option"
+                  aria-selected={activeSuggestionIndex === index}
+                  onMouseDown={(event) => event.preventDefault()}
+                  onMouseEnter={() => setActiveSuggestionIndex(index)}
+                  onClick={() => handleSelectSuggestion(location)}
+                  className={`group flex w-full items-center gap-3 rounded-xl px-3 py-3.5 text-left transition-all duration-150 ${
+                    activeSuggestionIndex === index
+                      ? 'bg-blue-50 dark:bg-[#263B5D]'
+                      : 'hover:bg-slate-50 dark:hover:bg-[#1B2A42]'
+                  }`}
+                >
+                  {/* Location icon */}
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-500 transition-colors group-hover:bg-blue-100 dark:bg-[#263B5D] dark:text-blue-400 dark:group-hover:bg-[#304A70]">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.7"
+                      className="h-[18px] w-[18px]"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      <circle cx="12" cy="10" r="2.5" />
+                    </svg>
+                  </div>
+
+                  {/* Location details */}
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-sm font-semibold text-slate-800 dark:text-slate-100">
+                      {location.name}
+                    </span>
+
+                    <span className="mt-1 block truncate text-xs font-medium text-slate-500 dark:text-slate-400">
+                      {detail || 'Location'}
+                    </span>
+                  </span>
+
+                  {/* Arrow icon */}
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    className="h-4 w-4 shrink-0 text-slate-300 transition-all group-hover:translate-x-0.5 group-hover:text-blue-500 dark:text-slate-500"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="m9 18 6-6-6-6"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </button>
+              )
+            })}
+          </div>
+        ) : (
+          <div className="px-4 py-6 text-center">
+            <p className="text-sm font-medium text-slate-600 dark:text-slate-300">
+              No matching locations found
+            </p>
+            <p className="mt-1 text-xs text-slate-400">
+              Try another city name.
+            </p>
+          </div>
+        )}
+      </div>
+    )
   }
 
   return (
@@ -222,6 +446,7 @@ function Navbar({
                     aria-hidden="true"
                   >
                     <circle cx="25" cy="17" r="8" fill="#FDE68A" />
+
                     <path
                       d="M12 30.5C12 26.9 14.9 24 18.5 24C19.1 19.9 22.6 17 26.7 17C31.2 17 34.8 20.6 34.8 25.1C38.1 25.1 40.5 27.6 40.5 30.7C40.5 34 37.8 36.5 34.5 36.5H18.5C14.9 36.5 12 33.8 12 30.5Z"
                       fill="white"
@@ -248,7 +473,7 @@ function Navbar({
               aria-live="polite"
               aria-label={`Open-Meteo API status: ${apiStatusLabel}`}
               title={`Open-Meteo API: ${apiStatusLabel}`}
-              className="ml-11 hidden shrink-0 items-center gap-2 rounded-full bg-transparent px-3 py-2 text-xs font-semibold sm:inline-flex"
+              className="ml-3 hidden shrink-0 items-center gap-2 rounded-full bg-transparent px-3 py-2 text-xs font-semibold sm:inline-flex"
             >
               {isApiLoading ? (
                 <span
@@ -262,6 +487,7 @@ function Navbar({
                       isApiOnline ? 'bg-emerald-400' : 'bg-red-400'
                     }`}
                   />
+
                   <span
                     className={`relative inline-flex h-2.5 w-2.5 animate-pulse rounded-full ${
                       isApiOnline
@@ -303,6 +529,7 @@ function Navbar({
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 />
+
                 <circle cx="12" cy="10" r="2.5" />
               </svg>
 
@@ -320,6 +547,7 @@ function Navbar({
                   {userLocation.city && (
                     <>
                       <span className="text-xs text-slate-400">/</span>
+
                       <span className="text-[13px] font-semibold text-slate-600 dark:text-slate-300">
                         {userLocation.city}
                       </span>
@@ -368,7 +596,7 @@ function Navbar({
             {/* Desktop City Search */}
             <form
               onSubmit={handleSubmit}
-              className="hidden h-10 w-44 items-center gap-2 rounded-xl border border-slate-200 bg-slate-50/80 px-3 transition-all duration-200 focus-within:border-blue-400 focus-within:bg-white focus-within:ring-4 focus-within:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-900 dark:focus-within:border-blue-500 dark:focus-within:bg-slate-800 lg:flex xl:w-52"
+              className="relative hidden h-10 w-44 items-center gap-2 rounded-xl border border-slate-200 bg-slate-50/80 px-3 transition-all duration-200 focus-within:border-blue-400 focus-within:bg-white focus-within:ring-4 focus-within:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-900 dark:focus-within:border-blue-500 dark:focus-within:bg-slate-800 lg:flex xl:w-52"
             >
               <svg
                 viewBox="0 0 24 24"
@@ -385,7 +613,12 @@ function Navbar({
               <input
                 type="text"
                 value={city}
-                onChange={(event) => setCity(event.target.value)}
+                onChange={handleCityChange}
+                onKeyDown={handleSuggestionKeyDown}
+                onFocus={() =>
+                  city.trim().length >= 2 && setShowSuggestions(true)
+                }
+                onBlur={() => setShowSuggestions(false)}
                 placeholder="Search city..."
                 aria-label="Search city"
                 className="w-full min-w-0 bg-transparent text-xs font-medium text-slate-700 outline-none placeholder:text-slate-400 dark:text-slate-100 dark:placeholder:text-slate-500"
@@ -398,6 +631,8 @@ function Navbar({
               >
                 Go
               </button>
+
+              {renderSuggestions()}
             </form>
 
             {/* Temperature Unit Switch */}
@@ -453,6 +688,7 @@ function Navbar({
                   aria-hidden="true"
                 >
                   <circle cx="12" cy="12" r="4" />
+
                   <path
                     d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"
                     strokeLinecap="round"
@@ -481,7 +717,7 @@ function Navbar({
         {/* Mobile Search */}
         <form
           onSubmit={handleSubmit}
-          className="mb-3 flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 focus-within:border-blue-400 focus-within:ring-4 focus-within:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-900 lg:hidden"
+          className="relative mb-3 flex h-10 items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 focus-within:border-blue-400 focus-within:ring-4 focus-within:ring-blue-500/10 dark:border-slate-700 dark:bg-slate-900 lg:hidden"
         >
           <svg
             viewBox="0 0 24 24"
@@ -498,7 +734,10 @@ function Navbar({
           <input
             type="text"
             value={city}
-            onChange={(event) => setCity(event.target.value)}
+            onChange={handleCityChange}
+            onKeyDown={handleSuggestionKeyDown}
+            onFocus={() => city.trim().length >= 2 && setShowSuggestions(true)}
+            onBlur={() => setShowSuggestions(false)}
             placeholder="Search a city..."
             aria-label="Search city"
             className="w-full min-w-0 bg-transparent text-sm text-slate-700 outline-none placeholder:text-slate-400 dark:text-white"
@@ -510,6 +749,8 @@ function Navbar({
           >
             Search
           </button>
+
+          {renderSuggestions()}
         </form>
       </nav>
     </header>

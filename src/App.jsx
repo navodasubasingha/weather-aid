@@ -30,8 +30,11 @@ function App() {
   const [weatherData, setWeatherData] = useState(null)
 
   const [isWeatherLoading, setIsWeatherLoading] = useState(true)
+
   const [apiStatus, setApiStatus] = useState('loading')
+
   const [isSearching, setIsSearching] = useState(false)
+
   const [weatherError, setWeatherError] = useState('')
 
   const searchControllerRef = useRef(null)
@@ -43,7 +46,7 @@ function App() {
     localStorage.setItem('weatherAidTheme', isDarkMode ? 'dark' : 'light')
   }, [isDarkMode])
 
-  // Fetch weather data when location or temperature unit changes
+  // Fetch weather data
   useEffect(() => {
     const controller = new AbortController()
 
@@ -58,12 +61,16 @@ function App() {
           signal: controller.signal,
         })
 
+        if (controller.signal.aborted) return
+
         setWeatherData(data)
         setApiStatus('online')
       } catch (error) {
         if (error.name !== 'AbortError') {
           console.error('Weather API error:', error)
+
           setApiStatus('offline')
+
           setWeatherError('Unable to load weather data. Please try again.')
         }
       } finally {
@@ -78,13 +85,20 @@ function App() {
     return () => controller.abort()
   }, [selectedLocation, unit])
 
-  // Search for a city using Open-Meteo Geocoding API
+  // Search city or select autocomplete suggestion
   async function handleSearch(query) {
+    // A selected suggestion already contains coordinates
+    if (query && typeof query === 'object') {
+      setSelectedLocation(query)
+      setWeatherError('')
+      return
+    }
+
     const searchTerm = query.trim()
 
     if (!searchTerm) return
 
-    // Cancel previous search request
+    // Cancel previous search
     searchControllerRef.current?.abort()
 
     const controller = new AbortController()
@@ -98,16 +112,18 @@ function App() {
         signal: controller.signal,
       })
 
+      if (controller.signal.aborted) return
+
       if (results.length === 0) {
         setWeatherError('No matching location found.')
         return
       }
 
-      // Use the first matching location for now
       setSelectedLocation(results[0])
     } catch (error) {
       if (error.name !== 'AbortError') {
         console.error('Location search error:', error)
+
         setWeatherError('Unable to search for this location. Please try again.')
       }
     } finally {

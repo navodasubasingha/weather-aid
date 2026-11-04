@@ -79,3 +79,48 @@ input {
 button {
   cursor: pointer;
 }
+
+
+
+/* WeatherAid Autocomplete Scrollbar */
+
+.weather-suggestions-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #94a3b8 transparent;
+}
+
+.weather-suggestions-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.weather-suggestions-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+  margin-block: 12px;
+}
+
+.weather-suggestions-scrollbar::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background-clip: content-box;
+}
+
+.weather-suggestions-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+  background-clip: content-box;
+}
+
+/* Dark Mode */
+.dark .weather-suggestions-scrollbar {
+  scrollbar-color: #475569 transparent;
+}
+
+.dark .weather-suggestions-scrollbar::-webkit-scrollbar-thumb {
+  background: #475569;
+  background-clip: content-box;
+}
+
+.dark .weather-suggestions-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+  background-clip: content-box;
+}
