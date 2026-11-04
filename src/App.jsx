@@ -191,7 +191,6 @@ function App() {
             <WeeklyForecast
               daily={weatherData?.daily}
               loading={isWeatherLoading}
-              unit={unit}
             />
           </div>
         </section>
