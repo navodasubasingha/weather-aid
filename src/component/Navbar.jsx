@@ -6,9 +6,18 @@ function Navbar({
   onUnitChange,
   darkMode = false,
   onToggleDarkMode,
+  apiStatus = 'loading',
 }) {
   const [city, setCity] = useState('')
   const [logoImageFailed, setLogoImageFailed] = useState(false)
+
+  const isApiLoading = apiStatus === 'loading'
+  const isApiOnline = apiStatus === 'online'
+  const apiStatusLabel = isApiLoading
+    ? 'Connecting...'
+    : isApiOnline
+      ? 'Online'
+      : 'Offline'
 
   // User location information
   const browserTimeZone =
@@ -186,50 +195,96 @@ function Navbar({
     <header className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/90 shadow-[0_2px_12px_rgba(15,23,42,0.03)] backdrop-blur-xl transition-colors duration-300 dark:border-slate-800 dark:bg-[#080F20]/90">
       <nav className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8">
         <div className="relative flex min-h-[76px] items-center justify-between gap-4">
-          {/* Brand Logo */}
-          <a
-            href="/"
-            className="group flex shrink-0 items-center gap-3"
-            aria-label="WeatherAid home"
-          >
-            <div className="relative flex h-11 w-11 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-br from-blue-500 to-blue-700 shadow-md shadow-blue-200/50 transition-transform duration-300 group-hover:scale-105 dark:shadow-blue-950/40">
-              {!logoImageFailed && (
-                <img
-                  src="/images/weather-aid-logo.png"
-                  alt=""
-                  aria-hidden="true"
-                  onError={() => setLogoImageFailed(true)}
-                  className="absolute inset-0 h-full w-full object-contain p-1.5"
-                />
-              )}
-
-              {logoImageFailed && (
-                <svg
-                  viewBox="0 0 48 48"
-                  fill="none"
-                  className="h-8 w-8 text-white"
-                  aria-hidden="true"
-                >
-                  <circle cx="25" cy="17" r="8" fill="#FDE68A" />
-                  <path
-                    d="M12 30.5C12 26.9 14.9 24 18.5 24C19.1 19.9 22.6 17 26.7 17C31.2 17 34.8 20.6 34.8 25.1C38.1 25.1 40.5 27.6 40.5 30.7C40.5 34 37.8 36.5 34.5 36.5H18.5C14.9 36.5 12 33.8 12 30.5Z"
-                    fill="white"
-                    fillOpacity="0.95"
+          {/* Brand and API connection status */}
+          <div className="flex shrink-0 items-center gap-3 sm:gap-4">
+            {/* Brand Logo */}
+            <a
+              href="/"
+              className="group flex shrink-0 items-center gap-3"
+              aria-label="WeatherAid home"
+            >
+              <div className="relative flex h-11 w-11 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-br from-blue-500 to-blue-700 shadow-md shadow-blue-200/50 transition-transform duration-300 group-hover:scale-105 dark:shadow-blue-950/40">
+                {!logoImageFailed && (
+                  <img
+                    src="/images/weather-aid-logo.png"
+                    alt=""
+                    aria-hidden="true"
+                    onError={() => setLogoImageFailed(true)}
+                    className="absolute inset-0 h-full w-full object-contain p-1.5"
                   />
-                </svg>
+                )}
+
+                {logoImageFailed && (
+                  <svg
+                    viewBox="0 0 48 48"
+                    fill="none"
+                    className="h-8 w-8 text-white"
+                    aria-hidden="true"
+                  >
+                    <circle cx="25" cy="17" r="8" fill="#FDE68A" />
+                    <path
+                      d="M12 30.5C12 26.9 14.9 24 18.5 24C19.1 19.9 22.6 17 26.7 17C31.2 17 34.8 20.6 34.8 25.1C38.1 25.1 40.5 27.6 40.5 30.7C40.5 34 37.8 36.5 34.5 36.5H18.5C14.9 36.5 12 33.8 12 30.5Z"
+                      fill="white"
+                      fillOpacity="0.95"
+                    />
+                  </svg>
+                )}
+              </div>
+
+              <div className="leading-none">
+                <span className="font-display text-[21px] font-bold tracking-[-0.06em] text-slate-900 dark:text-white">
+                  Weather<span className="text-blue-600">Aid</span>
+                </span>
+
+                <p className="mt-1.5 text-[9px] font-semibold uppercase tracking-[0.19em] text-slate-400 dark:text-slate-500">
+                  Weather intelligence
+                </p>
+              </div>
+            </a>
+
+            {/* API Connection Status */}
+            <div
+              role="status"
+              aria-live="polite"
+              aria-label={`Open-Meteo API status: ${apiStatusLabel}`}
+              title={`Open-Meteo API: ${apiStatusLabel}`}
+              className="ml-11 hidden shrink-0 items-center gap-2 rounded-full bg-transparent px-3 py-2 text-xs font-semibold sm:inline-flex"
+            >
+              {isApiLoading ? (
+                <span
+                  className="h-3 w-3 animate-spin rounded-full border-2 border-blue-500/25 border-t-blue-500"
+                  aria-hidden="true"
+                />
+              ) : (
+                <span className="relative flex h-2.5 w-2.5" aria-hidden="true">
+                  <span
+                    className={`absolute inline-flex h-full w-full animate-ping rounded-full opacity-40 ${
+                      isApiOnline ? 'bg-emerald-400' : 'bg-red-400'
+                    }`}
+                  />
+                  <span
+                    className={`relative inline-flex h-2.5 w-2.5 animate-pulse rounded-full ${
+                      isApiOnline
+                        ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.7)]'
+                        : 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.7)]'
+                    }`}
+                  />
+                </span>
               )}
-            </div>
 
-            <div className="leading-none">
-              <span className="font-display text-[21px] font-bold tracking-[-0.06em] text-slate-900 dark:text-white">
-                Weather<span className="text-blue-600">Aid</span>
+              <span
+                className={
+                  isApiLoading
+                    ? 'text-blue-600 dark:text-blue-400'
+                    : isApiOnline
+                      ? 'text-emerald-600 dark:text-emerald-400'
+                      : 'text-red-600 dark:text-red-400'
+                }
+              >
+                {apiStatusLabel}
               </span>
-
-              <p className="mt-1.5 text-[9px] font-semibold uppercase tracking-[0.19em] text-slate-400 dark:text-slate-500">
-                Weather intelligence
-              </p>
             </div>
-          </a>
+          </div>
 
           {/* Center - User Location, Time and Date */}
           <div className="absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-1.5 xl:flex">

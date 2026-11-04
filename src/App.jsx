@@ -30,6 +30,7 @@ function App() {
   const [weatherData, setWeatherData] = useState(null)
 
   const [isWeatherLoading, setIsWeatherLoading] = useState(true)
+  const [apiStatus, setApiStatus] = useState('loading')
   const [isSearching, setIsSearching] = useState(false)
   const [weatherError, setWeatherError] = useState('')
 
@@ -48,6 +49,7 @@ function App() {
 
     async function loadWeather() {
       setIsWeatherLoading(true)
+      setApiStatus('loading')
       setWeatherError('')
 
       try {
@@ -57,9 +59,11 @@ function App() {
         })
 
         setWeatherData(data)
+        setApiStatus('online')
       } catch (error) {
         if (error.name !== 'AbortError') {
           console.error('Weather API error:', error)
+          setApiStatus('offline')
           setWeatherError('Unable to load weather data. Please try again.')
         }
       } finally {
@@ -121,6 +125,7 @@ function App() {
         unit={unit}
         onUnitChange={setUnit}
         darkMode={isDarkMode}
+        apiStatus={apiStatus}
         onToggleDarkMode={() => setIsDarkMode((previous) => !previous)}
       />
 
@@ -139,12 +144,6 @@ function App() {
           {isSearching && (
             <p className="mt-1 text-sm text-blue-600 dark:text-blue-400">
               Searching location...
-            </p>
-          )}
-
-          {isWeatherLoading && (
-            <p className="mt-1 text-sm text-blue-600 dark:text-blue-400">
-              Loading weather data...
             </p>
           )}
 
