@@ -160,13 +160,17 @@ function FiveHourForecast({ current, hourly, loading }) {
                 ? current.temperature_2m
                 : hourly.temperature_2m?.[index]
 
+            // Chance of precipitation for this hour
+            const rainProbability =
+              hourly.precipitation_probability?.[index] ?? null
+
             return {
               id: hourly.time[index],
               time: offset === 0 ? 'Now' : `+${offset} hr`,
               temperature,
               icon: condition.icon,
               description: condition.description,
-              rain: hourly.precipitation_probability?.[index],
+              rain: rainProbability,
             }
           }
         )
@@ -291,18 +295,18 @@ function FiveHourForecast({ current, hourly, loading }) {
       </div>
 
       {/* Forecast Cards and Navigation */}
-      <div className="relative z-10 mt-6">
+      <div className="relative z-10 mt-6 flex flex-1 flex-col">
         {visibleHours.length > 0 ? (
           <>
             {/* Forecast cards */}
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
+            <div className="grid grid-cols-2 gap-3 sm:flex-1 sm:auto-rows-fr sm:grid-cols-5">
               {visibleHours.map((hour, index) => {
                 const isCurrentHour = safePage === 0 && index === 0
 
                 return (
                   <div
                     key={hour.id}
-                    className={`flex min-w-0 flex-col items-center rounded-2xl border px-2 py-4 text-center shadow-[0_3px_12px_rgba(15,23,42,0.08)] transition-all duration-200 hover:-translate-y-1 hover:border-blue-300 hover:shadow-[0_8px_20px_rgba(15,23,42,0.12)] dark:hover:border-blue-500 sm:px-2 sm:py-5 ${
+                    className={`flex h-full min-w-0 flex-col items-center rounded-2xl border px-2 py-4 text-center shadow-[0_3px_12px_rgba(15,23,42,0.08)] transition-all duration-200 hover:-translate-y-1 hover:border-blue-300 hover:shadow-[0_8px_20px_rgba(15,23,42,0.12)] dark:hover:border-blue-500 sm:px-2 sm:py-5 ${
                       isCurrentHour
                         ? 'border-blue-600 bg-gradient-to-br from-blue-500 to-blue-700 text-white dark:border-slate-600 dark:from-[#1B2A42] dark:via-[#1B2A42] dark:to-[#1B2A42] dark:text-slate-100 dark:shadow-none'
                         : 'border-slate-200 bg-white text-slate-900 dark:border-slate-600 dark:bg-[#1B2A42] dark:text-slate-100 dark:shadow-none'
@@ -342,18 +346,33 @@ function FiveHourForecast({ current, hourly, loading }) {
                         : '--°'}
                     </p>
 
-                    {/* Rain probability */}
-                    <div className="mt-4 flex items-center justify-center gap-1.5 rounded-full bg-blue-50 px-2.5 py-2 text-blue-700 dark:bg-[#263B5D] dark:text-blue-300">
+                    {/* Chance of Rain */}
+                    <div
+                      title={
+                        hour.rain != null
+                          ? `Chance of rain: ${Math.round(hour.rain)}%`
+                          : 'Chance of rain unavailable'
+                      }
+                      aria-label={
+                        hour.rain != null
+                          ? `Chance of rain ${Math.round(hour.rain)} percent`
+                          : 'Chance of rain unavailable'
+                      }
+                      className="mt-4 flex items-center justify-center gap-1.5 rounded-full bg-blue-50 px-2.5 py-2 text-blue-700 dark:bg-[#263B5D] dark:text-blue-300"
+                    >
+                      {/* Rain droplet icon */}
                       <svg
                         viewBox="0 0 24 24"
                         fill="currentColor"
-                        className="h-4 w-4 shrink-0"
+                        className="h-3.5 w-3.5 shrink-0"
                         aria-hidden="true"
                       >
                         <path d="M12 2.5C10.2 5.8 5.5 10.1 5.5 14.4a6.5 6.5 0 1 0 13 0C18.5 10.1 13.8 5.8 12 2.5Z" />
                       </svg>
 
-                      <span className="text-xs font-semibold tabular-nums">
+                      <span className="text-[10px] font-semibold">Rain</span>
+
+                      <span className="text-xs font-bold tabular-nums">
                         {hour.rain != null ? `${Math.round(hour.rain)}%` : '--'}
                       </span>
                     </div>
@@ -406,21 +425,6 @@ function FiveHourForecast({ current, hourly, loading }) {
                 : 'Hourly forecast is unavailable.'}
             </p>
           </div>
-        )}
-      </div>
-
-      {/* Footer and Page Indicator */}
-      <div className="relative z-10 mt-3 flex items-center justify-between gap-2">
-        <p className="text-[10px] text-slate-400 sm:text-[11px] dark:text-slate-500">
-          Live hourly forecast provided by Open-Meteo.
-        </p>
-
-        {forecastHours.length > 0 && (
-          <span className="shrink-0 text-[10px] font-semibold tabular-nums text-slate-500 dark:text-slate-400">
-            {safePage * HOURS_PER_PAGE + 1}–
-            {Math.min((safePage + 1) * HOURS_PER_PAGE, forecastHours.length)} of{' '}
-            {forecastHours.length}
-          </span>
         )}
       </div>
     </section>

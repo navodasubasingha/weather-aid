@@ -52,8 +52,14 @@ function CurrentWeather({
         className="absolute inset-0 -z-20 h-full w-full object-cover object-center"
       />
 
-      {/* Dark overlay */}
+      {/* Main dark overlay */}
       <div className="absolute inset-0 -z-10 bg-gradient-to-r from-blue-950/85 via-blue-950/45 to-blue-950/10" />
+
+      {/* Subtle bottom-right natural vignette */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_65%_55%_at_100%_100%,rgba(2,6,23,0.35)_0%,rgba(2,6,23,0.70)_42%,rgba(2,6,23,0.20)_75%,transparent_100%)]"
+      />
 
       {/* Location and weather information */}
       <div className="relative z-10">
