@@ -124,3 +124,121 @@ button {
   background: #64748b;
   background-clip: content-box;
 }
+
+
+/* =====================================
+   CURRENT WEATHER - RAIN ANIMATION
+===================================== */
+
+.weather-effect-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.weather-rain-drop {
+  position: absolute;
+  top: -100px;
+  width: 15px;
+  height: 90px;
+  animation-name: weather-rain-fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.weather-rain-stem {
+  display: block;
+  width: 1px;
+  height: 75%;
+  margin-left: 7px;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgba(219, 234, 254, 0.247)
+  );
+}
+
+.weather-rain-splat {
+  position: absolute;
+  bottom: 0;
+  left: 1px;
+  width: 13px;
+  height: 8px;
+  border-top: 2px dotted rgba(219, 234, 254, 0.7);
+  border-radius: 50%;
+  opacity: 0;
+  transform: scale(0);
+  animation-name: weather-rain-splat;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@keyframes weather-rain-fall {
+  from {
+    top: -100px;
+  }
+
+  to {
+    top: calc(100% - 90px);
+  }
+}
+
+@keyframes weather-rain-splat {
+  0%,
+  70% {
+    opacity: 0;
+    transform: scale(0);
+  }
+
+  85% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1.5);
+  }
+}
+
+
+/* =====================================
+   CURRENT WEATHER - SNOW ANIMATION
+===================================== */
+
+.weather-snowflake {
+  position: absolute;
+  top: -25px;
+  display: block;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1;
+  pointer-events: none;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.25);
+  animation-name: weather-snow-fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@keyframes weather-snow-fall {
+  from {
+    top: -25px;
+    transform: translateX(0) rotate(0deg);
+  }
+
+  to {
+    top: 100%;
+    transform: translateX(var(--snow-drift)) rotate(360deg);
+  }
+}
+
+
+/* Accessibility: respect reduced-motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .weather-rain-drop,
+  .weather-snowflake {
+    animation: none !important;
+    display: none;
+  }
+}

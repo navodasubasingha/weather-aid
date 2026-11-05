@@ -1,6 +1,92 @@
 import { getWeatherInfo } from '../utils/weatherAssets'
 import LocalTimeDisplay from './LocalTimeDisplay'
 
+// Open-Meteo weather codes for rain and snow
+function getWeatherEffect(weatherCode) {
+  const snowCodes = [71, 73, 75, 77, 85, 86]
+
+  const rainCodes = [
+    51, 53, 55, 56, 57, 61, 63, 65, 66, 67, 80, 81, 82, 95, 96, 99,
+  ]
+
+  if (snowCodes.includes(weatherCode)) return 'snow'
+  if (rainCodes.includes(weatherCode)) return 'rain'
+
+  return null
+}
+
+// Generate rain drops
+const rainDrops = Array.from({ length: 50 }, (_, index) => ({
+  id: index,
+  left: (index * 37) % 100,
+  delay: -((index * 13) % 10) / 10,
+  duration: 1.1 + ((index * 11) % 50) / 100,
+}))
+
+// Generate snowflakes
+const snowFlakes = Array.from({ length: 30 }, (_, index) => ({
+  id: index,
+  left: (index * 43) % 100,
+  delay: -((index * 7) % 90) / 10,
+  duration: 10 + ((index * 5) % 6),
+  size: 10 + ((index * 3) % 12),
+  drift: index % 2 === 0 ? 35 : -35,
+}))
+
+// Rain and snow animation component
+function WeatherEffect({ type }) {
+  if (type === 'rain') {
+    return (
+      <div className="weather-effect-layer" aria-hidden="true">
+        {rainDrops.map((drop) => (
+          <div
+            key={drop.id}
+            className="weather-rain-drop"
+            style={{
+              left: `${drop.left}%`,
+              animationDelay: `${drop.delay}s`,
+              animationDuration: `${drop.duration}s`,
+            }}
+          >
+            <span className="weather-rain-stem" />
+            <span
+              className="weather-rain-splat"
+              style={{
+                animationDelay: `${drop.delay}s`,
+                animationDuration: `${drop.duration}s`,
+              }}
+            />
+          </div>
+        ))}
+      </div>
+    )
+  }
+
+  if (type === 'snow') {
+    return (
+      <div className="weather-effect-layer" aria-hidden="true">
+        {snowFlakes.map((flake) => (
+          <span
+            key={flake.id}
+            className="weather-snowflake"
+            style={{
+              left: `${flake.left}%`,
+              fontSize: `${flake.size}px`,
+              animationDelay: `${flake.delay}s`,
+              animationDuration: `${flake.duration}s`,
+              '--snow-drift': `${flake.drift}px`,
+            }}
+          >
+            ❄
+          </span>
+        ))}
+      </div>
+    )
+  }
+
+  return null
+}
+
 function CurrentWeather({
   current,
   daily,
@@ -15,6 +101,9 @@ function CurrentWeather({
 
   // Get weather description and background image
   const weatherInfo = getWeatherInfo(weatherCode, isDay)
+
+  // Select rain / snow animation
+  const weatherEffect = getWeatherEffect(weatherCode)
 
   // Weather values from Open-Meteo API
   const temperature = current?.temperature_2m
@@ -49,17 +138,20 @@ function CurrentWeather({
         alt=""
         aria-hidden="true"
         onError={handleImageError}
-        className="absolute inset-0 -z-20 h-full w-full object-cover object-center"
+        className="absolute inset-0 z-0 h-full w-full object-cover object-center"
       />
 
       {/* Main dark overlay */}
-      <div className="absolute inset-0 -z-10 bg-gradient-to-r from-blue-950/85 via-blue-950/45 to-blue-950/10" />
+      <div className="absolute inset-0 z-[1] bg-gradient-to-r from-blue-950/85 via-blue-950/45 to-blue-950/10" />
 
-      {/* Subtle bottom-right natural vignette */}
+      {/* Bottom-right natural vignette */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_65%_55%_at_100%_100%,rgba(2,6,23,0.35)_0%,rgba(2,6,23,0.70)_42%,rgba(2,6,23,0.20)_75%,transparent_100%)]"
+        className="pointer-events-none absolute inset-0 z-[2] bg-[radial-gradient(ellipse_65%_55%_at_100%_100%,rgba(2,6,23,0.35)_0%,rgba(2,6,23,0.70)_42%,rgba(2,6,23,0.20)_75%,transparent_100%)]"
       />
+
+      {/* Rain / Snow animation */}
+      <WeatherEffect type={weatherEffect} />
 
       {/* Location and weather information */}
       <div className="relative z-10">

@@ -134,7 +134,8 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 transition-colors duration-300 dark:bg-[#080F20] dark:text-slate-100 xl:flex xl:h-screen xl:flex-col xl:overflow-hidden">
+    <div className="min-h-screen bg-[#EBF7FF] text-slate-900 transition-colors duration-300 dark:bg-[#080F20] dark:text-slate-100 xl:flex xl:h-screen xl:flex-col xl:overflow-hidden">
+      {' '}
       {/* Navigation */}
       <Navbar
         onSearch={handleSearch}
@@ -144,7 +145,6 @@ function App() {
         apiStatus={apiStatus}
         onToggleDarkMode={() => setIsDarkMode((previous) => !previous)}
       />
-
       <main className="mx-auto flex w-full max-w-[1440px] flex-1 flex-col gap-5 px-5 py-5 sm:px-6 lg:px-8 xl:min-h-0 xl:overflow-hidden">
         {/* Dashboard introduction */}
         <header className="shrink-0">
