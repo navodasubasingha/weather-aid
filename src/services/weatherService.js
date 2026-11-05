@@ -39,6 +39,7 @@ export async function getWeatherForecast(
   const params = new URLSearchParams({
     latitude: String(latitude),
     longitude: String(longitude),
+    precipitation_unit: 'mm',
 
     // Current weather conditions
     current: [
@@ -64,6 +65,10 @@ export async function getWeatherForecast(
       'wind_direction_10m',
       'visibility',
       'uv_index',
+
+      // New fields
+      'cloud_cover',
+      'precipitation',
     ].join(','),
 
     // Daily weather forecast
