@@ -170,23 +170,6 @@ function WeatherHighlights({ current, hourly, loading }) {
             </p>
           </div>
         </div>
-
-        {/* Analytics badge */}
-        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white text-blue-600 dark:border-slate-700 dark:bg-[#1B2A42] dark:text-blue-300">
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.8"
-            className="h-6 w-6"
-            aria-hidden="true"
-          >
-            <path d="M4 19V5m0 14h16" strokeLinecap="round" />
-            <rect x="7" y="11" width="3" height="5" rx="1" />
-            <rect x="13" y="7" width="3" height="9" rx="1" />
-            <rect x="19" y="3" width="1" height="13" rx=".5" />
-          </svg>
-        </div>
       </div>
 
       {/* Weather Metrics - 2 Columns x 3 Rows */}

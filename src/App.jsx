@@ -5,6 +5,7 @@ import CurrentWeather from './component/CurrentWeather'
 import WeatherHighlights from './component/WeatherHighlights'
 import FiveHourForecast from './component/FiveHourForecast'
 import WeeklyForecast from './component/WeeklyForecast'
+import DashboardSkeleton from './component/DashboardSkeleton'
 
 import { searchLocations } from './services/geocodingService'
 import { getWeatherForecast } from './services/weatherService'
@@ -38,6 +39,9 @@ function App() {
   const [weatherError, setWeatherError] = useState('')
 
   const searchControllerRef = useRef(null)
+
+  // Show full dashboard skeleton only on first load / refresh
+  const isInitialLoading = isWeatherLoading && !weatherData
 
   // Apply light / dark theme
   useEffect(() => {
@@ -135,7 +139,6 @@ function App() {
 
   return (
     <div className="min-h-screen bg-[#EBF7FF] text-slate-900 transition-colors duration-300 dark:bg-[#080F20] dark:text-slate-100 xl:flex xl:h-screen xl:flex-col xl:overflow-hidden">
-      {' '}
       {/* Navigation */}
       <Navbar
         onSearch={handleSearch}
@@ -145,6 +148,7 @@ function App() {
         apiStatus={apiStatus}
         onToggleDarkMode={() => setIsDarkMode((previous) => !previous)}
       />
+
       <main className="mx-auto flex w-full max-w-[1440px] flex-1 flex-col gap-5 px-5 py-5 sm:px-6 lg:px-8 xl:min-h-0 xl:overflow-hidden">
         {/* Dashboard introduction */}
         <header className="shrink-0">
@@ -168,47 +172,73 @@ function App() {
           )}
         </header>
 
-        {/* Top dashboard row */}
-        <section className="grid grid-cols-1 items-stretch gap-5 xl:min-h-0 xl:flex-[1.1] xl:grid-cols-12">
-          <div className="xl:col-span-7 xl:min-h-0">
-            <CurrentWeather
-              current={weatherData?.current}
-              daily={weatherData?.daily}
-              location={selectedLocation}
-              timezone={weatherData?.timezone}
-              loading={isWeatherLoading}
-              unit={unit}
-            />
-          </div>
+        {/* Initial loading / Weather dashboard */}
+        {isInitialLoading ? (
+          <DashboardSkeleton />
+        ) : weatherData ? (
+          <>
+            {/* Top dashboard row */}
+            <section className="grid grid-cols-1 items-stretch gap-5 xl:min-h-0 xl:flex-[1.1] xl:grid-cols-12">
+              <div className="xl:col-span-7 xl:min-h-0">
+                <CurrentWeather
+                  current={weatherData.current}
+                  daily={weatherData.daily}
+                  location={selectedLocation}
+                  timezone={weatherData.timezone}
+                  loading={false}
+                  unit={unit}
+                />
+              </div>
 
-          <div className="xl:col-span-5 xl:min-h-0">
-            <WeatherHighlights
-              current={weatherData?.current}
-              hourly={weatherData?.hourly}
-              loading={isWeatherLoading}
-            />
-          </div>
-        </section>
+              <div className="xl:col-span-5 xl:min-h-0">
+                <WeatherHighlights
+                  current={weatherData.current}
+                  hourly={weatherData.hourly}
+                  loading={false}
+                />
+              </div>
+            </section>
 
-        {/* Forecast row */}
-        <section className="grid grid-cols-1 items-stretch gap-5 xl:min-h-0 xl:flex-1 xl:grid-cols-12">
-          <div className="xl:col-span-5 xl:min-h-0">
-            <FiveHourForecast
-              key={`${selectedLocation.latitude}-${selectedLocation.longitude}`}
-              current={weatherData?.current}
-              hourly={weatherData?.hourly}
-              loading={isWeatherLoading}
-              unit={unit}
-            />
-          </div>
+            {/* Forecast row */}
+            <section className="grid grid-cols-1 items-stretch gap-5 xl:min-h-0 xl:flex-1 xl:grid-cols-12">
+              <div className="xl:col-span-5 xl:min-h-0">
+                <FiveHourForecast
+                  key={`${selectedLocation.latitude}-${selectedLocation.longitude}`}
+                  current={weatherData.current}
+                  hourly={weatherData.hourly}
+                  loading={false}
+                  unit={unit}
+                />
+              </div>
 
-          <div className="xl:col-span-7 xl:min-h-0">
-            <WeeklyForecast
-              daily={weatherData?.daily}
-              loading={isWeatherLoading}
-            />
+              <div className="xl:col-span-7 xl:min-h-0">
+                <WeeklyForecast daily={weatherData.daily} loading={false} />
+              </div>
+            </section>
+          </>
+        ) : (
+          /* Initial API error */
+          <div
+            role="alert"
+            className="flex min-h-[300px] flex-col items-center justify-center rounded-3xl border border-red-200 bg-white p-6 text-center dark:border-red-900 dark:bg-[#111D32]"
+          >
+            <p className="text-lg font-semibold text-slate-800 dark:text-white">
+              Weather data unavailable
+            </p>
+
+            <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+              {weatherError || 'Unable to load weather information.'}
+            </p>
+
+            <button
+              type="button"
+              onClick={() => window.location.reload()}
+              className="mt-5 rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700"
+            >
+              Try Again
+            </button>
           </div>
-        </section>
+        )}
       </main>
     </div>
   )

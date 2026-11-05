@@ -1,54 +1,35 @@
+
+/* =========================================
+   1. IMPORTS
+========================================= */
+
 @import "tailwindcss";
-@custom-variant dark (&:where(.dark, .dark *));
-
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-}
 
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
-@import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
-@import "tailwindcss";
+/* =========================================
+   2. TAILWIND CONFIGURATION
+========================================= */
+
+@custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
   --font-sans: "Plus Jakarta Sans", sans-serif;
   --font-display: "Space Grotesk", sans-serif;
-}
-
-body {
-  margin: 0;
-  font-family: "Plus Jakarta Sans", sans-serif;
-  background-color: #f8fafc;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-.font-display {
-  font-family: "Space Grotesk", sans-serif;
-}
-
-
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
-
-@import "tailwindcss";
-
-@theme {
   --font-montserrat: "Montserrat", sans-serif;
-  --font-sans: "Plus Jakarta Sans", sans-serif;
-  --font-display: "Space Grotesk", sans-serif;
 }
+
+
+/* =========================================
+   3. GLOBAL STYLES
+========================================= */
 
 :root {
   font-family: "Plus Jakarta Sans", sans-serif;
   color: #172033;
   background: #f6f8fc;
+
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -67,6 +48,7 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+
   font-family: "Plus Jakarta Sans", sans-serif;
   background: #f6f8fc;
 }
@@ -80,9 +62,14 @@ button {
   cursor: pointer;
 }
 
+.font-display {
+  font-family: "Space Grotesk", sans-serif;
+}
 
 
-/* WeatherAid Autocomplete Scrollbar */
+/* =========================================
+   4. WEATHERAID AUTOCOMPLETE SCROLLBAR
+========================================= */
 
 .weather-suggestions-scrollbar {
   scrollbar-width: thin;
@@ -100,8 +87,8 @@ button {
 
 .weather-suggestions-scrollbar::-webkit-scrollbar-thumb {
   background: #cbd5e1;
-  border-radius: 999px;
   border: 1px solid transparent;
+  border-radius: 999px;
   background-clip: content-box;
 }
 
@@ -110,7 +97,8 @@ button {
   background-clip: content-box;
 }
 
-/* Dark Mode */
+/* Dark mode scrollbar */
+
 .dark .weather-suggestions-scrollbar {
   scrollbar-color: #475569 transparent;
 }
@@ -126,9 +114,9 @@ button {
 }
 
 
-/* =====================================
-   CURRENT WEATHER - RAIN ANIMATION
-===================================== */
+/* =========================================
+   5. CURRENT WEATHER - RAIN ANIMATION
+========================================= */
 
 .weather-effect-layer {
   position: absolute;
@@ -143,6 +131,7 @@ button {
   top: -100px;
   width: 15px;
   height: 90px;
+
   animation-name: weather-rain-fall;
   animation-timing-function: linear;
   animation-iteration-count: infinite;
@@ -153,6 +142,7 @@ button {
   width: 1px;
   height: 75%;
   margin-left: 7px;
+
   background: linear-gradient(
     to bottom,
     transparent,
@@ -164,12 +154,16 @@ button {
   position: absolute;
   bottom: 0;
   left: 1px;
+
   width: 13px;
   height: 8px;
+
   border-top: 2px dotted rgba(219, 234, 254, 0.7);
   border-radius: 50%;
+
   opacity: 0;
   transform: scale(0);
+
   animation-name: weather-rain-splat;
   animation-timing-function: linear;
   animation-iteration-count: infinite;
@@ -204,18 +198,23 @@ button {
 }
 
 
-/* =====================================
-   CURRENT WEATHER - SNOW ANIMATION
-===================================== */
+/* =========================================
+   6. CURRENT WEATHER - SNOW ANIMATION
+========================================= */
 
 .weather-snowflake {
   position: absolute;
   top: -25px;
+
   display: block;
+
   color: rgba(255, 255, 255, 0.9);
   line-height: 1;
+
   pointer-events: none;
+
   text-shadow: 0 0 5px rgba(255, 255, 255, 0.25);
+
   animation-name: weather-snow-fall;
   animation-timing-function: linear;
   animation-iteration-count: infinite;
@@ -234,11 +233,62 @@ button {
 }
 
 
-/* Accessibility: respect reduced-motion preference */
+/* =========================================
+   7. DASHBOARD SKELETON LOADING
+========================================= */
+
+.skeleton-shimmer {
+  background: linear-gradient(
+    100deg,
+    rgba(148, 163, 184, 0.12) 20%,
+    rgba(148, 163, 184, 0.30) 40%,
+    rgba(148, 163, 184, 0.12) 60%
+  );
+
+  background-size: 200% 100%;
+
+  animation: skeleton-shimmer 1.5s ease-in-out infinite;
+}
+
+/* Dark mode skeleton */
+
+.dark .skeleton-shimmer {
+  background: linear-gradient(
+    100deg,
+    rgba(71, 85, 105, 0.35) 20%,
+    rgba(100, 116, 139, 0.55) 40%,
+    rgba(71, 85, 105, 0.35) 60%
+  );
+
+  background-size: 200% 100%;
+}
+
+/* Shimmer movement */
+
+@keyframes skeleton-shimmer {
+  from {
+    background-position: 100% 0;
+  }
+
+  to {
+    background-position: -100% 0;
+  }
+}
+
+
+/* =========================================
+   8. ACCESSIBILITY - REDUCED MOTION
+========================================= */
+
 @media (prefers-reduced-motion: reduce) {
   .weather-rain-drop,
-  .weather-snowflake {
+  .weather-snowflake,
+  .skeleton-shimmer {
     animation: none !important;
+  }
+
+  .weather-rain-drop,
+  .weather-snowflake {
     display: none;
   }
 }
