@@ -113,10 +113,10 @@ function WeeklyForecast({ daily, loading }) {
       className="font-montserrat relative flex h-full min-h-[340px] flex-col overflow-hidden rounded-3xl border border-blue-100 bg-gradient-to-br from-white via-blue-50/70 to-blue-100/70 p-5 shadow-sm transition-colors duration-300 sm:p-6 xl:min-h-0 dark:border-slate-700 dark:from-[#111D32] dark:via-[#17263E] dark:to-[#1E293B]"
     >
       {/* Header */}
-      <div className="flex items-center justify-between gap-3">
+      <div className="relative z-10 flex shrink-0 items-center justify-between gap-3">
         <div className="flex min-w-0 items-center gap-3">
           {/* Calendar icon */}
-          <div className="hidden h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 sm:flex dark:bg-transparent">
+          <div className="hidden h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 sm:flex dark:bg-transparent">
             {/* Light Mode - Original SVG */}
             <svg
               viewBox="0 0 24 24"
@@ -142,7 +142,7 @@ function WeeklyForecast({ daily, loading }) {
               src="/image/icons/calendar-icon.png"
               alt=""
               aria-hidden="true"
-              className="hidden h-12 w-12 rounded-2xl object-contain dark:block"
+              className="hidden h-11 w-11 rounded-2xl object-contain dark:block"
             />
           </div>
 
@@ -178,11 +178,11 @@ function WeeklyForecast({ daily, loading }) {
 
       {/* Seven day forecast cards */}
       {days.length > 0 ? (
-        <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4 xl:grid-cols-7">
+        <div className="relative z-10 mt-5 grid min-h-0 flex-1 grid-cols-2 gap-3 sm:grid-cols-4 xl:grid-cols-7 xl:grid-rows-1">
           {days.map((day) => (
             <div
               key={day.id}
-              className="flex min-w-0 flex-col items-center rounded-2xl border border-slate-200 bg-white px-2 py-4 text-center shadow-[0_3px_12px_rgba(15,23,42,0.08)] transition-all duration-200 hover:-translate-y-1 hover:border-blue-300 hover:shadow-[0_8px_20px_rgba(15,23,42,0.12)] dark:border-slate-600 dark:bg-[#1B2A42] dark:shadow-none dark:hover:border-blue-500 sm:px-2 sm:py-4"
+              className="flex h-full min-h-0 min-w-0 flex-col items-center justify-between rounded-2xl border border-slate-200 bg-white px-2 py-3 text-center shadow-[0_3px_12px_rgba(15,23,42,0.08)] transition-all duration-200 hover:-translate-y-1 hover:border-blue-300 hover:shadow-[0_8px_20px_rgba(15,23,42,0.12)] dark:border-slate-600 dark:bg-[#1B2A42] dark:shadow-none dark:hover:border-blue-500 sm:px-2 sm:py-3.5"
             >
               {/* Weekday */}
               <p className="text-sm font-bold text-slate-800 dark:text-slate-100">
@@ -196,7 +196,7 @@ function WeeklyForecast({ daily, loading }) {
 
               {/* Weather icon */}
               <span
-                className="my-4 block text-3xl sm:text-4xl"
+                className="my-2 block text-3xl sm:text-4xl"
                 role="img"
                 aria-label={day.condition}
               >
@@ -240,7 +240,7 @@ function WeeklyForecast({ daily, loading }) {
           ))}
         </div>
       ) : (
-        <div className="flex flex-1 items-center justify-center py-10">
+        <div className="relative z-10 mt-5 flex min-h-0 flex-1 items-center justify-center py-10">
           <p className="text-sm text-slate-500 dark:text-slate-400">
             {loading
               ? 'Loading 7-day forecast...'
