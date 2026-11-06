@@ -4,13 +4,19 @@
 
 WeatherAid is a responsive weather dashboard built with React. It helps users check current weather conditions, upcoming hourly forecasts, and a 7-day forecast in one place. The interface is designed to be clean and easy to use on desktop, tablet, and mobile screens.
 
-> **Project status:** In development. Features and layouts are being refined and tested.
+<details>
+  <summary><strong>Project links</strong></summary>
+
+- **Live Demo:** https://weather-aid-delta.vercel.app/
+- **GitHub Repository:** https://github.com/navodasubasingha/weather-aid
+
+</details>
 
 ## Features
 
 - **Current weather** – View the current temperature, feels-like temperature, weather condition, daily high and low, sunrise, and sunset.
 - **City search** – Search for locations using the Open-Meteo Geocoding API, with autocomplete suggestions.
-- **Current location** – Use the browser's location permission to find weather for the user's location.
+- **Current location** – Use browser location permission to find weather for the user's current location.
 - **Hourly forecast** – Check upcoming hourly conditions, including temperature, rain probability, wind speed, and wind direction.
 - **7-day forecast** – View daily weather conditions and minimum/maximum temperatures.
 - **Weather highlights** – See humidity, wind speed, UV index, visibility, cloud cover, and precipitation.
@@ -40,7 +46,7 @@ WeatherAid uses public weather services:
 
 - **Open-Meteo Forecast API:** https://open-meteo.com/en/docs
 - **Open-Meteo Geocoding API:** https://open-meteo.com/en/docs/geocoding-api
-- **BigDataCloud reverse geocoding:** https://www.bigdatacloud.com/ — used to help resolve a detected location into a readable place name, where configured in the project.
+- **BigDataCloud reverse geocoding:** https://www.bigdatacloud.com/ — used to help resolve a detected location into a readable place name in the location-detection flow.
 
 The Open-Meteo APIs used by this project do not require an API key for the current setup. The browser may ask for location permission when the current-location feature is used. Location access is optional; city search can be used instead.
 
@@ -50,14 +56,12 @@ The Open-Meteo APIs used by this project do not require an API key for the curre
 
 - Node.js (use a current compatible LTS release)
 - npm
-- Git (recommended)
+- Git
 
 ### 1. Clone the repository
 
-Replace `<your-repository-url>` with the URL of your GitHub repository.
-
 ```bash
-git clone <your-repository-url>
+git clone https://github.com/navodasubasingha/weather-aid.git
 ```
 
 ### 2. Open the project directory
@@ -78,7 +82,7 @@ npm install
 npm run dev
 ```
 
-Open the local URL printed in your terminal (Vite commonly uses `http://localhost:5173`).
+Open the local URL printed in your terminal. Vite commonly uses `http://localhost:5173`.
 
 ### 5. Create a production build
 
@@ -101,28 +105,29 @@ weather-aid/
 ├── public/
 │   └── image/
 │       ├── icons/
-│       └── logos/
+│       ├── logos/
+│       └── weather/
 ├── src/
+│   ├── assets/
 │   ├── component/
-│   │   ├── Navbar.jsx
-│   │   ├── CurrentWeather.jsx
-│   │   ├── LocalTimeDisplay.jsx
-│   │   ├── WeatherHighlights.jsx
-│   │   ├── FiveHourForecast.jsx
-│   │   ├── WeeklyForecast.jsx
-│   │   └── DashboardSkeleton.jsx
 │   ├── hooks/
+│   │   └── useCitySearch.js
 │   ├── services/
 │   │   ├── geocodingService.js
 │   │   └── weatherService.js
 │   ├── utils/
 │   │   └── weatherAssets.js
 │   ├── App.jsx
+│   ├── App.css
 │   ├── index.css
 │   └── main.jsx
+├── .gitignore
 ├── index.html
+├── LICENSE
+├── package-lock.json
 ├── package.json
-└── README.md
+├── README.md
+└── vite.config.js
 ```
 
 ## Weather Highlights
@@ -155,31 +160,28 @@ Rain and snowfall effects are rendered with CSS and selected using the current O
 - Do not commit `node_modules/` or generated build output (`dist/`).
 - Keep API request and location-search logic in the service files rather than duplicating it inside UI components.
 - Test the dashboard in both light and dark themes and at mobile, tablet, and desktop widths.
-- Browser location access requires user permission and may require a secure context when deployed (HTTPS).
+- Browser location access requires user permission and a secure context (HTTPS) when deployed.
 
 ## Screenshots
 
-Add screenshots of the current application here when they are ready. For example:
+Screenshots can be added to a `screenshots/` folder and embedded here when ready. For example:
 
-```text
-screenshots/
-├── dashboard-light.png
-├── dashboard-dark.png
-└── mobile-view.png
+```markdown
+![WeatherAid dashboard](screenshots/dashboard-light.png)
 ```
-
-Then embed them in this section using Markdown image links.
 
 ## Deployment
 
-WeatherAid can be deployed to a static hosting platform such as Vercel or Netlify. Build the project with `npm run build` and configure the hosting platform to use the generated `dist/` directory. Add your live deployment URL here after deployment:
+WeatherAid is deployed on Vercel.
 
-**Live Demo:** _Add deployment URL_
+**Live Demo:** https://weather-aid-delta.vercel.app/
+
+The project is connected to the GitHub repository. Push changes to the deployment branch to trigger a new Vercel deployment.
 
 ## License
 
-No license has been specified yet. Add a `LICENSE` file before presenting the project as open source, and choose a license that matches how you want others to use the code.
+This project is licensed under the **MIT License**. See the [`LICENSE`](LICENSE) file for the full license text.
 
 ---
 
-Built as a weather dashboard project with React, Vite, Tailwind CSS, and Open-Meteo.
+Built with React, Vite, Tailwind CSS, and Open-Meteo.
